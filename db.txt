@@ -1,250 +1,196 @@
-import { WhatsAppBot, Message, Commands, Command, User } from "rompot";
-
-type BuildConfig = {
-  /** Define o caminho da sessão do bot ou o gerenciador da sessão */
-  auth: string | Auth;
-  /** Desativa comandos automaticos */
-  disableAutoCommand?: boolean;
-  /** Ativa comandos automaticos para mensagem enviadas pelo bot */
-  autoRunBotCommand?: boolean;
-  /** Recebe as mensagem enviadas pelo bot no evento "message" */
-  receiveAllMessages?: boolean;
-  /** Desativa a visualização automatica das mensagem recebidas */
-  disableAutoRead?: boolean;
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
 };
-
-const bot = new WhatsAppBot({
-  disableAutoCommand: false,
-  autoRunBotCommand: true,
-  disableAutoRead: true,
-  receiveAllMessages: false,
-  disableAutoTyping: false,
-  auth: "./example/auth",
+Object.defineProperty(exports, "__esModule", { value: true });
+const rompot_1 = require("rompot");
+const bot = new rompot_1.WhatsAppBot({
+    disableAutoCommand: false,
+    autoRunBotCommand: true,
+    disableAutoRead: true,
+    receiveAllMessages: false,
+    disableAutoTyping: false,
+    auth: "./example/auth",
 });
-
-bot.on("open", (open: { status: string; isNewLogin: boolean }) => {
-  if (open.isNewLogin) {
-    console.log("Nova conexão");
-  }
-
-  console.log("Bot conectado!");
+bot.on("open", (open) => {
+    if (open.isNewLogin) {
+        console.log("Nova conexão");
+    }
+    console.log("Bot conectado!");
 });
-
 bot.on("close", () => {
-  console.log(`Bot desligado!`);
+    console.log(`Bot desligado!`);
 });
-
-bot.on("qr", (qr: string) => {
-  console.log("QR Gerado:", qr);
+bot.on("qr", (qr) => {
+    console.log("QR Gerado:", qr);
 });
-
 bot.on("conn", (update) => {
-  if (update.action == "connecting") {
-    console.log("Tentando conectar bot...");
-  }
-
-  if (update.action == "closed") {
-    console.log(`A conexão desse bot foi fechada`);
-  }
-
-  if (update.action == "reconnecting") {
-    console.log("Reconectando...");
-  }
+    if (update.action == "connecting") {
+        console.log("Tentando conectar bot...");
+    }
+    if (update.action == "closed") {
+        console.log(`A conexão desse bot foi fechada`);
+    }
+    if (update.action == "reconnecting") {
+        console.log("Reconectando...");
+    }
 });
-
-bot.on("message", async (message: Message) => {
-  console.log(`New message in ${message.chat.id}`);
+bot.on("message", (message) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(`New message in ${message.chat.id}`);
+}));
+bot.on("me", (message) => {
+    console.log(`Send message to ${message.user.id}`);
 });
-
-bot.on("me", (message: Message) => {
-  console.log(`Send message to ${message.user.id}`);
-});
-
 bot.on("chat", (update) => {
-  if (update.action == "add") {
-    console.log(`New chat: ${update.chat.id}`);
-  }
-
-  if (update.action == "remove") {
-    console.log(`Remove chat: ${update.chat.id}`);
-  }
+    if (update.action == "add") {
+        console.log(`New chat: ${update.chat.id}`);
+    }
+    if (update.action == "remove") {
+        console.log(`Remove chat: ${update.chat.id}`);
+    }
 });
-
 bot.on("member", (update) => {
-  if (update.action == "add") {
-    console.log(`Number ${update.member.id} joined group ${update.chat.id}`);
-  }
-
-  if (update.action == "remove") {
-    console.log(`Member group ${update.chat.id} left`);
-  }
-
-  if (update.action == "promote") {
-    console.log(`Member (${update.member.id}) promoved!`);
-  }
-
-  if (update.action == "demote") {
-    console.log(`Member (${update.member.id}) demoted!`);
-  }
+    if (update.action == "add") {
+        console.log(`Number ${update.member.id} joined group ${update.chat.id}`);
+    }
+    if (update.action == "remove") {
+        console.log(`Member group ${update.chat.id} left`);
+    }
+    if (update.action == "promote") {
+        console.log(`Member (${update.member.id}) promoved!`);
+    }
+    if (update.action == "demote") {
+        console.log(`Member (${update.member.id}) demoted!`);
+    }
 });
-
-bot.on("error", (err: any) => {
-  console.log("Um erro ocorreu:", err);
+bot.on("error", (err) => {
+    console.log("Um erro ocorreu:", err);
 });
-
-const hello = new Command("hello", "Manda um simples Hello");
+const hello = new rompot_1.Command("hello", "Manda um simples Hello");
 hello.setSend("Hello There!");
-
-const date = new Command(["date", "dt", "data"]);
-date.setExecute((message: Message) => {
-  const bot = message.getBot();
-  bot?.send(new Message(message.chat, `Data: ${new Date()}`));
+const date = new rompot_1.Command(["date", "dt", "data"]);
+date.setExecute((message) => {
+    const bot = message.getBot();
+    bot === null || bot === void 0 ? void 0 : bot.send(new rompot_1.Message(message.chat, `Data: ${new Date()}`));
 });
-
-const ban = new Command(["ban", "expulse"]);
-ban.setExecute((message: Message) => {
-  if (message.chat.type !== "group") {
-    return message.reply("Apenas é possível banir membros em grupos");
-  }
-
-  if (!message.chat.getMember(message.user)?.isAdmin) {
-    return message.reply("Vocẽ não tem permissão para executar esse comando");
-  }
-
-  if (!message.chat.getMember(bot.id)?.isAdmin) {
-    return message.reply("Eu não tenho permissão para executar esse comando");
-  }
-
-  if (message.mentions.length < 1) {
-    return message.reply("Vocẽ precisa mencionar alguem para que ela possa ser banida");
-  }
-
-  bot.removeMember(message.chat, new User(message.mentions[0] || ""));
+const ban = new rompot_1.Command(["ban", "expulse"]);
+ban.setExecute((message) => {
+    var _a, _b;
+    if (message.chat.type !== "group") {
+        return message.reply("Apenas é possível banir membros em grupos");
+    }
+    if (!((_a = message.chat.getMember(message.user)) === null || _a === void 0 ? void 0 : _a.isAdmin)) {
+        return message.reply("Vocẽ não tem permissão para executar esse comando");
+    }
+    if (!((_b = message.chat.getMember(bot.id)) === null || _b === void 0 ? void 0 : _b.isAdmin)) {
+        return message.reply("Eu não tenho permissão para executar esse comando");
+    }
+    if (message.mentions.length < 1) {
+        return message.reply("Vocẽ precisa mencionar alguem para que ela possa ser banida");
+    }
+    bot.removeMember(message.chat, new rompot_1.User(message.mentions[0] || ""));
 });
-
-const add = new Command(["add"]);
-add.setExecute((message: Message) => {
-  if (message.chat.type !== "group") {
-    return message.reply("Apenas é possível adicionar membros em grupos");
-  }
-
-  if (!message.chat.getMember(message.user)?.isAdmin) {
-    return message.reply("Vocẽ não tem permissão para executar esse comando");
-  }
-
-  if (!message.chat.getMember(bot.id)?.isAdmin) {
-    return message.reply("Eu não tenho permissão para executar esse comando");
-  }
-
-  if (message.mentions.length < 1) {
-    return message.reply("Vocẽ precisa mencionar alguem para que ela possa ser adicionada");
-  }
-
-  bot.addMember(message.chat, new User(message.mentions[0] || ""));
+const add = new rompot_1.Command(["add"]);
+add.setExecute((message) => {
+    var _a, _b;
+    if (message.chat.type !== "group") {
+        return message.reply("Apenas é possível adicionar membros em grupos");
+    }
+    if (!((_a = message.chat.getMember(message.user)) === null || _a === void 0 ? void 0 : _a.isAdmin)) {
+        return message.reply("Vocẽ não tem permissão para executar esse comando");
+    }
+    if (!((_b = message.chat.getMember(bot.id)) === null || _b === void 0 ? void 0 : _b.isAdmin)) {
+        return message.reply("Eu não tenho permissão para executar esse comando");
+    }
+    if (message.mentions.length < 1) {
+        return message.reply("Vocẽ precisa mencionar alguem para que ela possa ser adicionada");
+    }
+    bot.addMember(message.chat, new rompot_1.User(message.mentions[0] || ""));
 });
-
 const chat = `{message.chat.id}`;
 /* MENU. */
-
 bot.on("message", (message) => {
-  console.log(`Mensagem recebida de ${message.user.name}`);
-
-
-    
-if (message.text == "P" ){
-  message.reply(
-    "=================== \n"+    
-    "*1️⃣ BÁSICO*\n\n"+
-    "*2️⃣ Plus*\n\n"+
-    "*3️⃣ Família*\n\n"+
-    "```Digite o número da opção\nPara ter mais informações``` \n"
-    );}
-else if (message.text == "1" ){
-  message.reply(
-  "-----> BÁSICO <-----"+"\n"+
-    "    R$ 10,00 "+"\n"+
-    "------------------"+"\n"+
-  "⭕️ SERVIDOR BRASILEIRO🇧🇷"+"\n"+
-  "⭕️ LIMITE DE ACESSO 1"+"\n"+
-  "⭕️ CHAMADA VOIP ✔️"+"\n"+
-  "⭕️ FRANQUIA ILIMITADA✔️"+"\n"+
-  "⭕️ JOGOS ONLINES✔️"+"\n"+
-  "⭕️ BANCOS✔️"+"\n"+
-  "⭕️ STRIMER DE SERES E FILMES FHD✔️"+"\n"+
-  "⭕️ PROIBIDO Torrent🚫"+"\n");
-}
-else if (message.text == "2" ){
-  message.reply(
-    "-----> PLUS <-----"+"\n"+
-    "    R$ 10,00 "+"\n"+
-    "------------------"+"\n"+
-  "⭕️ SERVIDOR BRASILEIRO🇧🇷"+"\n"+
-  "⭕️ LIMITE DE ACESSO 1"+"\n"+
-  "⭕️ CHAMADA VOIP ✔️"+"\n"+
-  "⭕️ FRANQUIA ILIMITADA✔️"+"\n"+
-  "⭕️ JOGOS ONLINES✔️"+"\n"+
-  "⭕️ BANCOS✔️"+"\n"+
-  "⭕️ STRIMER DE SERES E FILMES FHD✔️"+"\n"+
-  "⭕️ PROIBIDO Torrent🚫"+"\n");
-}
-else if (message.text == "3" ){
-  message.reply(
-    "-----> FAMÍLIA <-----"+"\n"+
-    "    R$ 10,00 "+"\n"+
-    "------------------"+"\n"+
-  "⭕️ SERVIDOR BRASILEIRO🇧🇷"+"\n"+
-  "⭕️ LIMITE DE ACESSO 1"+"\n"+
-  "⭕️ CHAMADA VOIP ✔️"+"\n"+
-  "⭕️ FRANQUIA ILIMITADA✔️"+"\n"+
-  "⭕️ JOGOS ONLINES✔️"+"\n"+
-  "⭕️ BANCOS✔️"+"\n"+
-  "⭕️ STRIMER DE SERES E FILMES FHD✔️"+"\n"+
-  "⭕️ PROIBIDO Torrent🚫"+"\n");
-}
-else if (message.text == "T" ){
-  message.reply(
-    "Aula 1: seu link aqui "+"\n"+
-    "Aula 2: seu link aqui "+"\n"+
-    "Aula 3: seu link aqui "+"\n"+
-    "Aula 4: seu link aqui "+"\n"+
-    "Aula 5: seu link aqui "+"\n"
-    );
-}
-else if (message.text == "B" ){
-  message.reply(
-    "Play Store: seu link aqui "+"\n"+
-    "Dropbox: seu link aqui "+"\n"
-    );
-}
-else if (message.text == "S" ){
-  message.reply(
-    "Suporte humano: seu link dou WhatsApp ou telegram"+"\n"
-    );}
-  else {
-    message.reply(
-    "=================== \n"+
-    "*P ➡️  PLANOS*\n"+
-    "*T ➡️  TUTORIAL*\n"+
-    "*B ➡️  BAIXAR APP*\n"+
-    "*S ➡️  SUPORTE*\n"+
-    "\n```Digite a primeira letra```\n"+
-    "\n===================");
-      }}
-
-);
-
-bot.on("me", (message) => {
-  console.log(`Mensagem enviada para ${message.chat.id}`);
+    console.log(`Mensagem recebida de ${message.user.name}`);
+    if (message.text == "P") {
+        message.reply("=================== \n" +
+            "*1️⃣ BÁSICO*\n\n" +
+            "*2️⃣ Plus*\n\n" +
+            "*3️⃣ Família*\n\n" +
+            "```Digite o número da opção\nPara ter mais informações``` \n");
+    }
+    else if (message.text == "1") {
+        message.reply("-----> BÁSICO <-----" + "\n" +
+            "    R$ 10,00 " + "\n" +
+            "------------------" + "\n" +
+            "⭕️ SERVIDOR BRASILEIRO🇧🇷" + "\n" +
+            "⭕️ LIMITE DE ACESSO 1" + "\n" +
+            "⭕️ CHAMADA VOIP ✔️" + "\n" +
+            "⭕️ FRANQUIA ILIMITADA✔️" + "\n" +
+            "⭕️ JOGOS ONLINES✔️" + "\n" +
+            "⭕️ BANCOS✔️" + "\n" +
+            "⭕️ STRIMER DE SERES E FILMES FHD✔️" + "\n" +
+            "⭕️ PROIBIDO Torrent🚫" + "\n");
+    }
+    else if (message.text == "2") {
+        message.reply("-----> PLUS <-----" + "\n" +
+            "    R$ 10,00 " + "\n" +
+            "------------------" + "\n" +
+            "⭕️ SERVIDOR BRASILEIRO🇧🇷" + "\n" +
+            "⭕️ LIMITE DE ACESSO 1" + "\n" +
+            "⭕️ CHAMADA VOIP ✔️" + "\n" +
+            "⭕️ FRANQUIA ILIMITADA✔️" + "\n" +
+            "⭕️ JOGOS ONLINES✔️" + "\n" +
+            "⭕️ BANCOS✔️" + "\n" +
+            "⭕️ STRIMER DE SERES E FILMES FHD✔️" + "\n" +
+            "⭕️ PROIBIDO Torrent🚫" + "\n");
+    }
+    else if (message.text == "3") {
+        message.reply("-----> FAMÍLIA <-----" + "\n" +
+            "    R$ 10,00 " + "\n" +
+            "------------------" + "\n" +
+            "⭕️ SERVIDOR BRASILEIRO🇧🇷" + "\n" +
+            "⭕️ LIMITE DE ACESSO 1" + "\n" +
+            "⭕️ CHAMADA VOIP ✔️" + "\n" +
+            "⭕️ FRANQUIA ILIMITADA✔️" + "\n" +
+            "⭕️ JOGOS ONLINES✔️" + "\n" +
+            "⭕️ BANCOS✔️" + "\n" +
+            "⭕️ STRIMER DE SERES E FILMES FHD✔️" + "\n" +
+            "⭕️ PROIBIDO Torrent🚫" + "\n");
+    }
+    else if (message.text == "T") {
+        message.reply("Aula 1: seu link aqui " + "\n" +
+            "Aula 2: seu link aqui " + "\n" +
+            "Aula 3: seu link aqui " + "\n" +
+            "Aula 4: seu link aqui " + "\n" +
+            "Aula 5: seu link aqui " + "\n");
+    }
+    else if (message.text == "B") {
+        message.reply("Play Store: seu link aqui " + "\n" +
+            "Dropbox: seu link aqui " + "\n");
+    }
+    else if (message.text == "S") {
+        message.reply("Suporte humano: seu link dou WhatsApp ou telegram" + "\n");
+    }
+    else {
+        message.reply("=================== \n" +
+            "*P ➡️  PLANOS*\n" +
+            "*T ➡️  TUTORIAL*\n" +
+            "*B ➡️  BAIXAR APP*\n" +
+            "*S ➡️  SUPORTE*\n" +
+            "\n```Digite a primeira letra```\n" +
+            "\n===================");
+    }
 });
-
-
-
-
-
-const commands = new Commands({ hello, date, ban, add });
+bot.on("me", (message) => {
+    console.log(`Mensagem enviada para ${message.chat.id}`);
+});
+const commands = new rompot_1.Commands({ hello, date, ban, add });
 commands.setPrefix("/");
-
-
-
 bot.setCommands(commands);
 bot.connect();
