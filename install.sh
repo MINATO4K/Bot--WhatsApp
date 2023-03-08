@@ -28,5 +28,5 @@ clear
 
 mkdir dist;
 touch index.ts;
-cat db.txt > index.ts
-
+cat db.txt > index.ts;
+tsc
