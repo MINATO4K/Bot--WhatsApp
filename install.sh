@@ -10,7 +10,7 @@ apt upgrade -y;
 
 clear;
 
-echo -e "<<<<<< INSTALANDO SISTEMA E PACOTES,\nPRIORITÁRIOS PARA O BOT>>>>>";
+echo -e "<<<<<< INSTALANDO SISTEMA E PACOTES,\nPRIORITÁRIOS PARA O BOT >>>>>";
 sleep 5
 clear;
 apt install nodejs -y;
@@ -30,3 +30,4 @@ mkdir dist;
 touch index.ts;
 cat db.txt > index.ts;
 tsc
+node index.js
