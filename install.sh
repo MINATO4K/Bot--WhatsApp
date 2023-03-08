@@ -27,8 +27,6 @@ sleep 5
 clear
 
 mkdir dist;
-touch index.ts;
-cat db.txt > index.ts;
-tsc --init;
-tsc;
+touch index.js;
+cat db.txt > index.js;
 node index.js;
