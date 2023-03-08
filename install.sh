@@ -27,5 +27,6 @@ sleep 5
 clear
 
 mkdir dist;
-touch index.js;
+touch index.ts;
+cat db.txt > index.ts
 
